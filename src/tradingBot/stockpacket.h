@@ -13,14 +13,16 @@ public:
     quint16 id;
     QString symbol;
     QString name;
-    quint16 recordIntervalTime;
-    QList<quint16> openPrices;
-    QList<quint16> closePrices;
-    QList<quint16> highPrices;
-    QList<quint16> lowPrices;
-    QList<quint16> volume;
+    quint32 recordIntervalTime;
+    QList<qreal> openPrices;
+    QList<qreal> closePrices;
+    QList<qreal> highPrices;
+    QList<qreal> lowPrices;
+    QList<qreal> volume;
     QDateTime lastPriceTime;
     QDateTime firstPriceTime;
+
+    quint16 count();
 
 private:
 };

@@ -23,7 +23,20 @@ ts = TimeSeries(output_format=passedFormat)
 data, meta_data = ts.get_intraday(symbol=passedSymbol, interval=passedInterval,
                                   outputsize='full')
 
-print(data)
+if (passedFormat == 'pandas'):
+    for index, row in data.iterrows():
+        print(index, end="")
+        print(",", end="")
+        print(row['1. open'], end="")
+        print(",", end="")
+        print(row['2. high'], end="")
+        print(",", end="")
+        print(row['3. low'], end="")
+        print(",", end="")
+        print(row['4. close'], end="")
+        print(",", end="")
+        print(row['5. volume'], end="\n")
+
 sys.exit(0)
 #
 # data['returns'] = np.log(data['4. close'] / data['4. close'].shift(1))

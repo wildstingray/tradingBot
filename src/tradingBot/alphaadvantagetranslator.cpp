@@ -1,6 +1,8 @@
 #include "alphaadvantagetranslator.h"
 #include <QProcess>
 #include <QJsonDocument>
+#include <QBuffer>
+#include <QTextStream>
 
 #define AV_TIME_INTERVAL "1min"
 #define AV_PROGRAM "python"
@@ -22,6 +24,9 @@ void AlphaAdvantageTranslator::handleStockCall(StockPacket stock)
     args.append(OUTPUT_FORMAT_JSON);
     quint16 id = processManager.createNewProcess(AV_PROGRAM, args);
 
+    //TODO use Record interval time to determine length for alphavantage
+    stock.recordIntervalTime = 60 * 1000;
+
     if (id != 0)
     {
         activeCalls.insert(id, stock);
@@ -30,11 +35,43 @@ void AlphaAdvantageTranslator::handleStockCall(StockPacket stock)
 
 void AlphaAdvantageTranslator::handleNewStockInformation(quint16 id, QByteArray data)
 {
+    StockPacket newPacket = activeCalls.value(id);
+
     if (activeCalls.contains(id))
     {
-        QJsonDocument doc = QJsonDocument::fromJson(data);
-        quint8 test = 0;
-        test++;
-        //Process data and place it into stock packet
+        QString line;
+        QStringList parts;
+        QTextStream stream(data);
+
+        line = stream.readLine();
+        parts = line.split(",");
+
+        if (parts.length() >= 6)
+        {
+            newPacket.lastPriceTime = QDateTime::fromString(parts.at(0), "yyyy-dd-MM HH:mm:ss");
+            newPacket.openPrices.append(parts.at(1).toFloat());
+            newPacket.highPrices.append(parts.at(2).toFloat());
+            newPacket.lowPrices.append(parts.at(3).toFloat());
+            newPacket.closePrices.append(parts.at(4).toFloat());
+            newPacket.volume.append(parts.at(5).toFloat());
+        }
+
+        while (!stream.atEnd()) {
+            line = stream.readLine();
+            parts = line.split(",");
+
+            if (parts.length() >= 6)
+            {
+                newPacket.firstPriceTime = QDateTime::fromString(parts.at(0), "yyyy-dd-MM HH:mm:ss");
+                newPacket.openPrices.append(parts.at(1).toFloat());
+                newPacket.highPrices.append(parts.at(2).toFloat());
+                newPacket.lowPrices.append(parts.at(3).toFloat());
+                newPacket.closePrices.append(parts.at(4).toFloat());
+                newPacket.volume.append(parts.at(5).toFloat());
+            }
+        }
     }
+
+    activeCalls.remove(id);
+    emit newStockInformationReady(newPacket);
 }

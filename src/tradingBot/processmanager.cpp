@@ -27,23 +27,31 @@ quint16 ProcessManager::createNewProcess(QString program, QStringList args)
 
 void ProcessManager::handleProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
+    Q_UNUSED(exitCode)
+    Q_UNUSED(exitStatus)
     handleNewDataAvailable();
 }
 
 void ProcessManager::handleNewDataAvailable()
 {
-    QMap<quint16, QSharedPointer<QProcess>>::const_iterator it = m_processes.constBegin();
+    QMap<quint16, QSharedPointer<QProcess>>::iterator it = m_processes.begin();
+    QList<quint16> keysToBeRemoved;
 
-    while (it != m_processes.constEnd())
+    while (it != m_processes.end())
     {
         QByteArray output = it.value()->readAllStandardOutput();
         emit newProcessData(it.key(), output);
 
         if (it.value()->state() == QProcess::NotRunning)
         {
-            m_processes.remove(it.key());
+            keysToBeRemoved.append(it.key());
         }
 
         it++;
+    }
+
+    for (int i = 0; i < keysToBeRemoved.length(); i++)
+    {
+        m_processes.remove(keysToBeRemoved.at(i));
     }
 }

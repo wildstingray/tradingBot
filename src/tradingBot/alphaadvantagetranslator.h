@@ -13,7 +13,7 @@ public:
     explicit AlphaAdvantageTranslator(QObject *parent = nullptr);
 
 signals:
-    void newStockInformationReady(StockPacket & stock);
+    void newStockInformationReady(const StockPacket & stock);
 
 public slots:
     void handleStockCall(StockPacket stock);
