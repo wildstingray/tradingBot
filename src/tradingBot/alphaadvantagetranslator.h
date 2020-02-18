@@ -19,11 +19,11 @@ public slots:
     void handleStockCall(StockPacket stock);
 
 protected slots:
-    void handleNewStockInformation(quint16 id, QByteArray data);
+    void handleNewStockInformation(quint32 id, QByteArray data);
 
 private:
     ProcessManager processManager;
-    QMap<quint16, StockPacket> activeCalls;
+    QMap<quint32, StockPacket> activeCalls;
 };
 
 #endif // ALPHAADVANTAGETRANSLATOR_H

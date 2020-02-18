@@ -23,7 +23,7 @@ public slots:
     void handleNewDataAvailable();
 
 private:
-    quint16 m_idIndex;
+    quint32 m_idIndex;
     QThread m_thread;
     QMap<quint16, QSharedPointer<QProcess>> m_processes;
 };

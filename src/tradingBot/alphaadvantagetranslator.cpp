@@ -21,8 +21,8 @@ void AlphaAdvantageTranslator::handleStockCall(StockPacket stock)
     args.append(TEMPORARY_ADDRESS_OF_PYTHON_SCRIPT);
     args.append(stock.symbol);
     args.append(AV_TIME_INTERVAL);
-    args.append(OUTPUT_FORMAT_JSON);
-    quint16 id = processManager.createNewProcess(AV_PROGRAM, args);
+    args.append(OUTPUT_FORMAT_PANDAS);
+    quint32 id = processManager.createNewProcess(AV_PROGRAM, args);
 
     //TODO use Record interval time to determine length for alphavantage
     stock.recordIntervalTime = 60 * 1000;
@@ -33,7 +33,7 @@ void AlphaAdvantageTranslator::handleStockCall(StockPacket stock)
     }
 }
 
-void AlphaAdvantageTranslator::handleNewStockInformation(quint16 id, QByteArray data)
+void AlphaAdvantageTranslator::handleNewStockInformation(quint32 id, QByteArray data)
 {
     StockPacket newPacket = activeCalls.value(id);
 
@@ -48,7 +48,7 @@ void AlphaAdvantageTranslator::handleNewStockInformation(quint16 id, QByteArray 
 
         if (parts.length() >= 6)
         {
-            newPacket.lastPriceTime = QDateTime::fromString(parts.at(0), "yyyy-dd-MM HH:mm:ss");
+            newPacket.lastPriceTime = QDateTime::fromString(parts.at(0), "yyyy-MM-dd HH:mm:ss");
             newPacket.openPrices.append(parts.at(1).toFloat());
             newPacket.highPrices.append(parts.at(2).toFloat());
             newPacket.lowPrices.append(parts.at(3).toFloat());

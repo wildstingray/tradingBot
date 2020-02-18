@@ -2,6 +2,8 @@
 #define TRADEMANAGER_H
 
 #include <QObject>
+#include <QList>
+#include "stockpacket.h"
 
 class TradeManager : public QObject
 {
@@ -9,8 +11,22 @@ class TradeManager : public QObject
 public:
     explicit TradeManager(QObject *parent = nullptr);
 
-signals:
+    void startTeslaCall()
+    {
+        startNewCall("Tesla", "TSLA");
+    }
 
+public slots:
+    void handleNewStockInformation(const StockPacket newStock);
+
+signals:
+    void requestNewStockInformation(StockPacket stock);
+
+private:
+    QList<StockPacket> m_stocks;
+
+    quint32 startNewCall(QString name, QString symbol);
+    quint32 m_idCounter;
 };
 
 #endif // TRADEMANAGER_H

@@ -4,13 +4,14 @@
 #include <QString>
 #include <QList>
 #include <QDateTime>
+#include <QMetaType>
 
-class StockPacket
+struct StockPacket
 {
 public:
     StockPacket();
 
-    quint16 id;
+    quint32 id;
     QString symbol;
     QString name;
     quint32 recordIntervalTime;
@@ -23,8 +24,8 @@ public:
     QDateTime firstPriceTime;
 
     quint16 count();
-
-private:
 };
+
+Q_DECLARE_METATYPE(StockPacket)
 
 #endif // STOCKPACKET_H

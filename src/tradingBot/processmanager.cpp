@@ -4,6 +4,7 @@ ProcessManager::ProcessManager(QObject *parent) : QObject(parent)
 {
     m_thread.start();
     m_idIndex = 0;
+    qRegisterMetaType<QProcess::ExitStatus>("QProcess::ExitStatus");
 }
 
 quint16 ProcessManager::createNewProcess(QString program, QStringList args)
@@ -16,7 +17,7 @@ quint16 ProcessManager::createNewProcess(QString program, QStringList args)
 //    process->moveToThread(&m_thread);
     connect(&m_thread, &QThread::finished, process.data(), &QObject::deleteLater);
     connect(process.data(), QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &ProcessManager::handleProcessFinished);
-    connect(process.data(), &QProcess::readyRead, this, &ProcessManager::handleNewDataAvailable);
+    //connect(process.data(), &QProcess::readyRead, this, &ProcessManager::handleNewDataAvailable);
 
     process->start(program, args);
 
